@@ -13,6 +13,9 @@ spec:
     command:
     - cat
     tty: true
+    env:  
+      - name: "GOOGLE_APPLICATION_CREDENTIALS"
+        value: "/var/run/secret/cloud.google.com/service-account.json"
     volumeMounts:
       - name: kube-config
         mountPath: /root/.kube     
