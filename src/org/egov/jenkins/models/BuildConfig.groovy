@@ -36,6 +36,9 @@ class BuildConfig {
             case ~/.*utilities.*/:
                 repo = "UTILITIES"
                 break;    
+            case ~/.*wns-migration.*/:
+                repo = "punjab-rainmaker-customization"
+                break;    
             default:
                 repo = "ALL-OTHERS"
         }
