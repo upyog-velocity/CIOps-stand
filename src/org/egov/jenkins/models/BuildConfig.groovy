@@ -24,6 +24,9 @@ class BuildConfig {
             case ~/.*core-services.*/:
                 repo = "CORE"
                 break;
+            case ~/.*core-services-1.*/:
+                repo = "CORE"
+                break;
             case ~/.*municipal-services.*/:
                 repo = "MUNICIPAL"
                 break;
