@@ -1,7 +1,7 @@
 library 'ci-libs'
 
 def call(Map pipelineParams) {
-
+    echo "Environment: ${pipelineParams.environment}"
 podTemplate(yaml: """
 kind: Pod
 metadata:
