@@ -6,7 +6,7 @@ def call(Map pipelineParams) {
     echo "env.CLUSTER_CONFIGS: ${env.CLUSTER_CONFIGS}"
     echo "pipelineParams.environment: ${pipelineParams.environment}"
     echo "env.IMAGES: ${env.IMAGES}"
-    echo "POD_LABEL: ${POD_LABEL}"
+    //echo "POD_LABEL: ${POD_LABEL}"
     podTemplate(yaml: """
 kind: Pod
 metadata:
