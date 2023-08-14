@@ -2,6 +2,7 @@ library 'ci-libs'
 
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
+    // Print out the variables
     echo "pipelineParams.helmDir: ${pipelineParams.helmDir}"
     echo "env.CLUSTER_CONFIGS: ${env.CLUSTER_CONFIGS}"
     echo "pipelineParams.environment: ${pipelineParams.environment}"
@@ -9,21 +10,25 @@ def call(Map pipelineParams) {
     podTemplate(yaml: """
 kind: Pod
 metadata:
-  name: debug-egov-deployer
+  name: egov-deployer
 spec:
   containers:
-  - name: debug-egov-deployer
+  - name: egov-deployer
     image: egovio/egov-deployer:3-master-931c51ff
     command:
     - cat
     tty: true
+    env:
+    volumeMounts:
+      - name: kube-config
+        mountPath: /root/.kube
     resources:
       requests:
         memory: "256Mi"
         cpu: "200m"
       limits:
         memory: "256Mi"
-        cpu: "200m"     
+        cpu: "200m"
   volumes:
   - name: kube-config
     secret:
@@ -31,10 +36,15 @@ spec:
 """
     ) {
         node(POD_LABEL) {
+            git url: pipelineParams.repo, branch: pipelineParams.branch, credentialsId: 'git_read'
+            
+            // Adding the "Export Kubeconfig Secret" stage
             stage('Export Kubeconfig Secret') {
-                container(name: 'debug-egov-deployer', shell: '/bin/sh') {
+                container(name: 'egov-deployer', shell: '/bin/sh') {
                     sh """
+                        # Create the .kube directory
                         mkdir -p /root/.kube
+                        
                         # Extract the kubeconfig from the secret and write it to a file
                         kubectl get secret ${pipelineParams.environment}-kube-config -n jenkins -o jsonpath='{.data.config}' | base64 -d > /root/.kube/config
                         
@@ -43,17 +53,14 @@ spec:
                     """
                 }
             }
-
-            stage('Deploy and Validate') {
-                container(name: 'debug-egov-deployer', shell: '/bin/sh') {
+            
+            stage('Deploy Images') {
+                container(name: 'egov-deployer', shell: '/bin/sh') {
                     sh """
-                        kubectl get pods -n jenkins
-                        kubectl get secrets -n jenkins
-                        ls -al /root/.kube
+                        /opt/egov/egov-deployer deploy --helm-dir `pwd`/${pipelineParams.helmDir} -c=${env.CLUSTER_CONFIGS}  -e ${pipelineParams.environment} "${env.IMAGES}"
                     """
                 }
             }
-            echo "Inside the debug node"
         }
     }
 }
