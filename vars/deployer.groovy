@@ -35,7 +35,7 @@ spec:
         secretName: "${pipelineParams.environment}-kube-config"
 """
     ) {
-        node(POD_LABEL) {
+        node(podLabel) {
             git url: pipelineParams.repo, branch: pipelineParams.branch, credentialsId: 'git_read'
                 stage('Deploy Images') {
                     container(name: 'egov-deployer', shell: '/bin/sh') {
