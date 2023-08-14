@@ -23,11 +23,7 @@ spec:
         cpu: "200m"
       limits:
         memory: "256Mi"
-        cpu: "200m"
-    env:
-    volumeMounts:
-      - name: kube-config
-        mountPath: /root/.kube     
+        cpu: "200m"     
   volumes:
   - name: kube-config
     secret:
