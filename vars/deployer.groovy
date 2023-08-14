@@ -3,7 +3,7 @@ library 'ci-libs'
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
     
-    podTemplate(label: 'debug-pod-label', yaml: """
+    podTemplate(yaml: """
 kind: Pod
 metadata:
   name: debug-egov-deployer
@@ -27,7 +27,7 @@ spec:
         secretName: "${pipelineParams.environment}-kube-config"
 """
     ) {
-        node('debug-pod-label') {
+        node(POD_LABEL) {
             echo "Inside the debug node"
         }
     }
