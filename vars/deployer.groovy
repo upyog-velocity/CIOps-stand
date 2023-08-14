@@ -2,7 +2,10 @@ library 'ci-libs'
 
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
-    
+    echo "pipelineParams.helmDir: ${pipelineParams.helmDir}"
+    echo "env.CLUSTER_CONFIGS: ${env.CLUSTER_CONFIGS}"
+    echo "pipelineParams.environment: ${pipelineParams.environment}"
+    echo "env.IMAGES: ${env.IMAGES}"
     podTemplate(yaml: """
 kind: Pod
 metadata:
