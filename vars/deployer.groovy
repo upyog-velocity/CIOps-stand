@@ -30,7 +30,7 @@ spec:
         secretName: "${pipelineParams.environment}-kube-config"
 """
     ) {
-        node('debug-egov-deployer') {  // Changed the node label to match the container name
+        node(POD_LABEL) {  // Changed the node label to match the container name
             stage('Validate Secret Access') {
                 container('debug-egov-deployer') {
                     // Check if the directory exists and list the content
