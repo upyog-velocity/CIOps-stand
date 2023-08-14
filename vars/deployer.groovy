@@ -31,7 +31,7 @@ spec:
             stage('Deploy and Validate') {
                 container(name: 'debug-egov-deployer', shell: '/bin/sh') {
                     sh """
-                        kubectl get nodes
+                        kubectl get secrets -n jenkins
                         ls -al /root/.kube
                     """
                 }
