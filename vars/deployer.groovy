@@ -7,7 +7,7 @@ def call(Map pipelineParams) {
     echo "pipelineParams.environment: ${pipelineParams.environment}"
     echo "env.IMAGES: ${env.IMAGES}"
     //echo "POD_LABEL: ${POD_LABEL}"
-    podTemplate(label: 'my-pod-label',yaml: """
+    podTemplate(yaml: """
 kind: Pod
 metadata:
   name: egov-deployer
@@ -35,11 +35,14 @@ spec:
         secretName: "${pipelineParams.environment}-kube-config"
 """
     ) {
-        node('my-pod-label') {
+        node(POD_LABEL) {
             git url: pipelineParams.repo, branch: pipelineParams.branch, credentialsId: 'git_read'
                 stage('Deploy Images') {
                     container(name: 'egov-deployer', shell: '/bin/sh') {
                         sh """
+                            echo "deploying helm chart"
+                            kubectl get pods -n jenkins
+                            helm ls
                             /opt/egov/egov-deployer deploy --helm-dir `pwd`/${pipelineParams.helmDir} -c=${env.CLUSTER_CONFIGS}  -e ${pipelineParams.environment} "${env.IMAGES}"
                         """
                     }
