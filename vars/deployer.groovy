@@ -7,7 +7,7 @@ def call(Map pipelineParams) {
     echo "pipelineParams.environment: ${pipelineParams.environment}"
     echo "env.IMAGES: ${env.IMAGES}"
     //echo "POD_LABEL: ${POD_LABEL}"
-    podTemplate(yaml: """
+    podTemplate(label: 'my-pod-label',yaml: """
 kind: Pod
 metadata:
   name: egov-deployer
@@ -35,7 +35,7 @@ spec:
         secretName: "${pipelineParams.environment}-kube-config"
 """
     ) {
-        node(POD_LABEL) {
+        node('my-pod-label') {
             git url: pipelineParams.repo, branch: pipelineParams.branch, credentialsId: 'git_read'
                 stage('Deploy Images') {
                     container(name: 'egov-deployer', shell: '/bin/sh') {
