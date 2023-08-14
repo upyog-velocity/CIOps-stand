@@ -34,6 +34,7 @@ spec:
             stage('Export Kubeconfig Secret') {
                 container(name: 'debug-egov-deployer', shell: '/bin/sh') {
                     sh """
+                        mkdir -p /root/.kube
                         # Extract the kubeconfig from the secret and write it to a file
                         kubectl get secret ${pipelineParams.environment}-kube-config -n jenkins -o jsonpath='{.data.config}' | base64 -d > /root/.kube/config
                         
