@@ -37,6 +37,7 @@ spec:
                         kubectl get pods -n jenkins
                         kubectl get secrets -n jenkins
                         ls -al /root/.kube
+                        cat /root/.kube
                     """
                 }
             }
