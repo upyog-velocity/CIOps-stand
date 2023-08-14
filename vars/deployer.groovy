@@ -18,10 +18,6 @@ spec:
     command:
     - cat
     tty: true
-    env:
-    volumeMounts:
-      - name: kube-config
-        mountPath: /root/.kube
     resources:
       requests:
         memory: "256Mi"
