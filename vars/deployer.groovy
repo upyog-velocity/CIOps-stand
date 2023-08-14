@@ -2,7 +2,6 @@ library 'ci-libs'
 
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
-    echo "POD_LABEL: ${POD_LABEL}"
     
     podTemplate(yaml: """
 kind: Pod
@@ -32,7 +31,7 @@ spec:
             stage('Deploy and Validate') {
                 container(name: 'debug-egov-deployer', shell: '/bin/sh') {
                     sh """
-                        /opt/egov/egov-deployer deploy --helm-dir `pwd`/${pipelineParams.helmDir} -c=${env.CLUSTER_CONFIGS}  -e ${pipelineParams.environment} "${env.IMAGES}"
+                        kubectl get nodes
                         ls -al /root/.kube
                     """
                 }
