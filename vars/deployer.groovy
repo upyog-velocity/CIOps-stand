@@ -31,13 +31,24 @@ spec:
 """
     ) {
         node(POD_LABEL) {
+            stage('Export Kubeconfig Secret') {
+                container(name: 'debug-egov-deployer', shell: '/bin/sh') {
+                    sh """
+                        # Extract the kubeconfig from the secret and write it to a file
+                        kubectl get secret ${pipelineParams.environment}-kube-config -n jenkins -o jsonpath='{.data.config}' | base64 -d > /root/.kube/config
+                        
+                        # Optionally, set KUBECONFIG environment variable to use this kubeconfig
+                        export KUBECONFIG=/root/.kube/config
+                    """
+                }
+            }
+
             stage('Deploy and Validate') {
                 container(name: 'debug-egov-deployer', shell: '/bin/sh') {
                     sh """
                         kubectl get pods -n jenkins
                         kubectl get secrets -n jenkins
                         ls -al /root/.kube
-                        cat /root/.kube/config
                     """
                 }
             }
