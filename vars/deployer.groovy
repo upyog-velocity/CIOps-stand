@@ -2,6 +2,7 @@ library 'ci-libs'
 
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
+    echo "POD_LABEL: ${POD_LABEL}"
     
     podTemplate(yaml: """
 kind: Pod
