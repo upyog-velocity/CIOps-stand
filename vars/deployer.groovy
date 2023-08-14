@@ -1,19 +1,27 @@
 library 'ci-libs'
-
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
-    
-    podTemplate(yaml: """
+    // Print out the variables
+    echo "pipelineParams.helmDir: ${pipelineParams.helmDir}"
+    echo "env.CLUSTER_CONFIGS: ${env.CLUSTER_CONFIGS}"
+    echo "pipelineParams.environment: ${pipelineParams.environment}"
+    echo "env.IMAGES: ${env.IMAGES}"
+    //echo "POD_LABEL: ${POD_LABEL}"
+    podTemplate(label: 'my-pod-label',yaml: """
 kind: Pod
 metadata:
-  name: debug-egov-deployer
+  name: egov-deployer
 spec:
   containers:
-  - name: debug-egov-deployer
+  - name: egov-deployer
     image: egovio/egov-deployer:3-master-931c51ff
     command:
     - cat
     tty: true
+    env:
+    volumeMounts:
+      - name: kube-config
+        mountPath: /root/.kube
     resources:
       requests:
         memory: "256Mi"
@@ -27,17 +35,15 @@ spec:
         secretName: "${pipelineParams.environment}-kube-config"
 """
     ) {
-        node(POD_LABEL) {
-            stage('Deploy and Validate') {
-                container(name: 'debug-egov-deployer', shell: '/bin/sh') {
-                    sh """
-                        kubectl get pods -n jenkins
-                        kubectl get secrets -n jenkins
-                        ls -al /root/.kube
-                    """
+        node('my-pod-label') {
+            git url: pipelineParams.repo, branch: pipelineParams.branch, credentialsId: 'git_read'
+                stage('Deploy Images') {
+                    container(name: 'egov-deployer', shell: '/bin/sh') {
+                        sh """
+                            /opt/egov/egov-deployer deploy --helm-dir `pwd`/${pipelineParams.helmDir} -c=${env.CLUSTER_CONFIGS}  -e ${pipelineParams.environment} "${env.IMAGES}"
+                        """
+                    }
                 }
-            }
-            echo "Inside the debug node"
         }
     }
 }
