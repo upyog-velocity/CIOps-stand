@@ -1,3 +1,4 @@
+def podLabel = "${pipelineParams.environment}"
 library 'ci-libs'
 def call(Map pipelineParams) {
     echo "Environment: ${pipelineParams.environment}"
