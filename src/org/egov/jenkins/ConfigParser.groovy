@@ -9,8 +9,6 @@ import java.nio.file.Paths;
 class ConfigParser {
 
     static List<JobConfig> parseConfig(def yaml, def env) {
-        println "Current JOB_NAME: ${env.JOB_NAME}"  // Logging JOB_NAME
-        println "Parsed YAML Config: ${yaml}"        // Logging entire YAML configuration
         String jobName = env.JOB_NAME;
         if( ! yaml.config instanceof List)
             throw new Exception("Invalid job config file format!")
