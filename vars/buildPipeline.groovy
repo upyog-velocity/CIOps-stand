@@ -143,7 +143,8 @@ spec:
                                     --snapshotMode=time \
                                     --destination=${image} \
                                     --no-push=${noPushImage} \
-                                    --cache-repo=velsof/cache/cache
+                                    --cache-repo=velsof/cache/cache \
+                                    --force
                                 """
                                 echo "${image} pushed successfully!"
                                 }                                
