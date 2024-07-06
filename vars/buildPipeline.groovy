@@ -127,7 +127,8 @@ spec:
                                     --destination=${image} \
                                     --destination=${gcr_image} \
                                     --no-push=${noPushImage} \
-                                    --cache-repo=velsof/cache/cache
+                                    --cache-repo=velsof/cache/cache \
+                                    --force
                                   """  
                                   echo "${image} and ${gcr_image} pushed successfully!!"                              
                                 }
